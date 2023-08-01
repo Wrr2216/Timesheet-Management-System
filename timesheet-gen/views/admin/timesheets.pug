@@ -1,0 +1,136 @@
+head
+  link(rel='stylesheet', href='/stylesheets/admin_style.css')
+  script(src='/js/jquery-3.6.3.min.js')
+  script(src='/js/sorttable.js')
+  script(src='/js/timesheet_controller.js')
+  title Timesheet View
+
+block content
+  h1 Timesheet View
+  .centerBox
+    button.btn.btn-primary(onclick="window.history.back()") Back
+  - var payPeriodList = []
+  label(for="payPeriodList") Sort by Pay Period
+  select#payPeriodList.form-control(onchange="updateTable()")
+    option(value="") Select Pay Period
+    each timesheet in timesheets
+      - var timesheetData = timesheet.timesheet_data 
+      - var payPeriodName = timesheetData[0].payPeriod.name || "No Pay Period"
+      - if(payPeriodList.indexOf(payPeriodName) == -1)
+        - payPeriodList.push(payPeriodName)
+        option(value=payPeriodName)= payPeriodName
+  button.btn.btn-primary(onclick="exportReport()") Download Report
+  .user-info
+    table.table.sortable
+      thead
+        tr
+          th Timesheet ID
+          th Pay Period
+          th Employee
+          th Submitted
+          th Week 1 Regular 
+          th Week 1 Overtime
+          th Week 2 Regular 
+          th Week 2 Overtime
+          th Vacation
+          th Holiday
+          th Flat Rate Items
+          th Regular / Overtime
+          th Actions
+      tbody
+        each timesheet in timesheets
+          tr(data-pay-period=timesheet.timesheet_data[0].payPeriod.name)
+            td= timesheet.id
+            - var timesheetData = timesheet.timesheet_data 
+            - var empName = timesheetData[0].employee_name
+            - var payPeriodStart = timesheetData[0].payPeriod.start
+            - var payPeriodEnd = timesheetData[0].payPeriod.end
+            - var payPeriodName = timesheetData[0].payPeriod.name
+            - payPeriodList.push(payPeriodName)
+            td= payPeriodName
+            td= empName
+            - var isSubmitted = "No";
+            - var week1 = timesheet.week_1;
+            - var week2 = timesheet.week_2;
+            - var week1_total = 0;
+            - var week2_total = 0;
+            - var week1_reg = 0;
+            - var week2_reg = 0;
+            - var week1_other = 0;
+            - var week2_other = 0;
+            - var week1_ot = 0;
+            - var week2_ot = 0;
+            - var holiday = 0;
+            - var vacation = 0;
+            - var totalRegular = 0;
+            - var totalOvertime = 0;
+            - var flatRate = 0;
+            - if(timesheet.submitted != null){
+              - if(timesheet.submitted == 1){
+                - isSubmitted = "Yes";
+              - }else if(timesheet.submitted == 0) {
+                - isSubmitted = "No";
+              - }else {
+                - isSubmitted = "N/A";
+              - }
+            - }
+
+
+            - if(timesheet.flatRateItems != null)
+              - flatRate = timesheet.flatRateItems.length || 0;
+
+            - for (var i = 0; i < week1.length; i++) {
+              - if (!isNaN(week1[i].total)) {
+                - week1_total += parseFloat(week1[i].total);
+              - }
+              - if (!isNaN(week1[i].extra_hours)) {
+                - week1_other += parseFloat(week1[i].extra_hours);
+              - }
+              - if (!isNaN(week1[i].holiday)) {
+                - holiday += parseFloat(week1[i].holiday);
+              - }
+              - if (!isNaN(week1[i].vacation)) {
+                - vacation += parseFloat(week1[i].vacation);
+              - }
+            - }
+
+            - for (var i = 0; i < week2.length; i++) {
+              - if (!isNaN(week2[i].total)) {
+                - week2_total += parseFloat(week2[i].total);
+              - }
+              - if (!isNaN(week2[i].extra_hours)) {
+                - week2_other += parseFloat(week2[i].extra_hours);
+              - }
+              - if (!isNaN(week2[i].holiday)) {
+                - holiday += parseFloat(week2[i].holiday);
+              - }
+              - if (!isNaN(week2[i].vacation)) {
+                - vacation += parseFloat(week2[i].vacation);
+              - }
+            - }
+            
+            - week1_reg = Math.min(week1_total, 40);
+            - week1_ot = Math.max(week1_total - 40, 0);
+            - totalRegular += week1_reg;
+            - totalOvertime += week1_ot;
+
+            - week2_reg = Math.min(week2_total, 40);
+            - week2_ot = Math.max(week2_total - 40, 0);
+            - totalRegular += week2_reg;
+            - totalOvertime += week2_ot;
+            
+            td= isSubmitted
+            td= week1_reg || 0
+            td= week1_ot || 0
+            td= week2_reg || 0
+            td= week2_ot || 0
+            td= vacation || 0
+            td= holiday || 0
+            td= flatRate
+            td= "(" + totalRegular + " / " + totalOvertime + ")"
+            td
+              //a.btn.btn-primary(href=`/timesheets/download/${timesheet.id}`, disabled) View
+              a.btn.btn-success(href=`/timesheets/download/${timesheet.id}`) View
+              a.btn.btn-success(href=`/timesheets/edit/${timesheet.id}`) Edit
+              a.btn.btn-danger(href=`/timesheets/delete/${timesheet.id}`, onclick="return confirm('Are you sure you want to delete this timesheet?')") Delete
+              

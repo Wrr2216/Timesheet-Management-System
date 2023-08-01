@@ -1,0 +1,35 @@
+extends layout.pug
+
+block content
+  h1 Register Account
+    .login
+      form(action='/user/create' method='post')
+        label(for='username')
+          i.fas.fa-user-nurse
+        input#username(type='text' name='username' placeholder='Username' required='')
+        label(for='password')
+          i.fas.fa-user-lock
+        input#password(type='password' name='password' placeholder='Password' required='')
+        label(for='first_name')
+          i.fas.fa-user
+        input#first_name(type='text' name='first_name' placeholder='First Name' required='')
+        label(for='last_name')
+          i.fas.fa-user
+        input#last_name(type='text' name='last_name' placeholder='Last Name' required='')
+        label(for='email')
+            i.fas.fa-at
+        input#email(type='email' name='email' placeholder='Email' required='')
+        label(for='role')
+            i.fas.fa-star-of-life
+        select#role(name='role')
+            option(value='emtp') Paramedic
+            option(value='emtb') EMT-Basic
+        label(for='base')
+            i.fas.fa-hospital
+        select#base(name='base')
+                option(value='Crawford') Base Location1 
+                option(value='Montgomery') Base Location2
+                option(value='Polk') Base Location3
+                option(value='Sevier') Base Location4
+        input(type='submit' value='Create Account')
+        btn.btn.btn-primary(class='regBtn' onclick="window.location.href='/'") Cancel

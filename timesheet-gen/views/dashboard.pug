@@ -1,0 +1,17 @@
+extends layout.pug
+
+block content
+  h1 Timesheet System
+  h1 Hello, #{user[0]}! #{user[2]}
+  div.center-button
+    .btn-primary(class='regBtn' onclick="window.location.href='/timesheets/new'") Create a new timesheet
+    .btn-primary(class='regBtn' onclick="window.location.href='/user/timesheets'") My Timesheets
+  if user[2] === 'admin'
+    div.center-button
+      .btn-primary(class='regBtn' onclick="window.location.href='/admin/dashboard'") Admin Dashboard
+  if user[2] === 'dev'
+      div.center-button
+        .btn-primary(class='regBtn' onclick="window.location.href='/dev/dashboard'") Developer Dashboard
+        .btn-primary(class='regBtn' onclick="window.location.href='/admin/dashboard'") Admin Dashboard
+  .center-button
+    .btn-primary(class='regBtn' onclick="window.location.href='/user/logout'") Logout

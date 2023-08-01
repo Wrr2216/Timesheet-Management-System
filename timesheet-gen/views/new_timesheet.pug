@@ -1,0 +1,81 @@
+extends timesheet_layout.pug
+
+block content
+    script(src='/js/timesheet_controller.js')
+    .notices
+      h3 Notices
+      ul
+        li Regular hours are SCHEDULED hours.
+        li Think of the date changing at 0700 every day for timesheet purposes.
+        li Enter any "Other Hours" worked in the Other Hours column.
+        li If you arrive before 0700, record that time on the previous date.
+        li If you stay late, record that time on the next date.
+        li Use the buttons to explain other hours and to enter LDT's, FTO shifts, or any other time that is paid as a flat rate.
+    .container
+      button.btn.btn-primary(onclick="window.history.back()") Back
+      button.btn.btn-primary(onclick='addFlatRateRow()') Click to add LDT / FTO Shift / Flat Rate Items
+      button.btn.btn-primary(onclick='addExplRow()') Click to explain other hours
+      - if(!isNaN(proxy) && proxy == true)
+          h3= "Proxy Timesheet for " + user[0] + " " + user[1]
+          input(type='hidden', name='proxy', value='true') 
+    form(action='/timesheets/create', method='post', onsubmit='return validateForm();')
+        .form-group
+            label(for='employee_name') Employee Name
+            input(type='text', name='employee_name', placeholder='Employee Name', value=(user[0] + " " + user[1]), required)
+        .form-group
+            label(for='pay_period') Pay Period
+            select#pay_period
+                each pay_period in payPeriods
+                    option(value=pay_period.name)= pay_period.name
+        .form-group
+            label(for='base_selection') Base
+            select#base(name="base_selection", value=user[2], required)
+                option(value='Crawford') Base Location
+                option(value='Montgomery' disabled) Base Location
+                option(value='Polk' disabled) Base Location
+                option(value='Sevier' disabled) Base Location
+        input(type='hidden', name='pay_period_name')
+        input(type='hidden', name='employee_id', value=user[3])
+        table.table
+            thead
+                tr
+                    th Date
+                    th Time On
+                    th Time Off
+                    th Regular Hours
+                    th Other Hours
+                    th Vacation Hours
+                    th Unit
+                    th Total
+            tbody 
+             - for(var i = 0; i < 14; i++){
+                - var date = new Date(payPeriods[0].start);
+                - date.setDate(date.getDate() + i);
+                - var day = date.toString().substr(0, 3);
+                - var week = (i < 7) ? "week_1" : "week_2";
+                - var dateStr = day + " - " + (date.getMonth() + 1) + "/" + date.getDate();
+                - var fullDate = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
+                input(type='hidden', name=week + '_' + day.toLowerCase() + '_date', value=dateStr)
+                tr
+                  td=dateStr 
+                  td
+                    input(type='number', name=week + '_' + day.toLowerCase() + '_time_on', placeholder='Time On')
+                  td 
+                    input(type='number', name=week + '_' + day.toLowerCase() + '_time_off', placeholder='Time Off')
+                  td 
+                    input(type='number', min=0, max=24, name=week + '_' + day.toLowerCase() + '_regular_hours', placeholder='Regular Hours', value=0)
+                  td
+                    input(type='number', min=0, max=24, name=week + '_' + day.toLowerCase() + '_extra_hours', placeholder='Extra Hours', value=0)
+                  td
+                    input(type='number', min=0, max=24, name=week + '_' + day.toLowerCase() + '_vacation_hours', placeholder='Vacation Hours', value=0)
+                  td 
+                    input(type='number', name=week + '_' + day.toLowerCase() + '_unit', placeholder='Unit')
+                  td 
+                    input(type='number', min=0, max=24, name=week + '_' + day.toLowerCase() + '_total', placeholder='Total Hours', value=0)
+             - }
+                tr
+                include flatrate_mi.pug
+                include otherhours_mi.pug
+                input(type='submit', value='Submit', onclick="if (validateForm()) submitTimesheet(); return false;")
+                button.btn.btn-primary(type='button', onclick='saveTimesheet()') Save
+include footer_mi.pug

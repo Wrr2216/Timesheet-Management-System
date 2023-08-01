@@ -1,0 +1,11 @@
+extends layout.pug 
+
+block content 
+    h1 Forgot Password 
+    .login 
+        form(action='/user/forgot' method='post') 
+            label(for='email') 
+                i.fas.fa-user 
+            input#username(type='text' name='email' placeholder='Email' required='') 
+            input(type='submit' value='Submit') 
+            btn.btn.btn-primary(class='regBtn' onclick="window.location.href='/'") Cancel

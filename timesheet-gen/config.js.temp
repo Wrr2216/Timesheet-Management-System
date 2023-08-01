@@ -1,0 +1,23 @@
+config.email.service = "Gmail";
+config.email.username = "swems.timesheets@gmail.com";
+config.email.password = "fzuezyboidpqekgh";
+config.email.destination = "wrr2216@gmail.com";
+config.email.bcc = "wrr2216@gmail.com";
+config.email.from = "swems.timesheets@gmail.com";
+
+config.sql.host = "192.158.238.246";
+config.sql.user = "millerc1_swems_user";
+config.sql.password = "Swemsar!";
+config.sql.database = "millerc1_swems";
+
+config.email.service = process.env.EMAIL_SERVICE;
+config.email.username = process.env.EMAIL_USER;
+config.email.password = process.env.EMAIL_PASS;
+config.email.destination = process.env.EMAIL_DEST;
+config.email.bcc = process.env.EMAIL_BCC;
+config.email.from = process.env.EMAIL_FROM;
+
+config.sql.host = process.env.SQL_HOST;
+config.sql.user = process.env.SQL_USER;
+config.sql.password = process.env.SQL_PASS;
+config.sql.database = process.env.SQL_DB;

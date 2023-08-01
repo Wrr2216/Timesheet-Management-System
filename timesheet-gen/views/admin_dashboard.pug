@@ -1,0 +1,10 @@
+head
+  link(rel='stylesheet', href='/stylesheets/admin_style.css')
+  title Admin Dashboard
+
+block content
+  h1 Admin Dashboard
+  .centerBox
+    button.btn.btn-primary(onclick="window.history.back()") Back
+    button.btn.btn-primary(onclick="window.location.href='/admin/timesheets'") View All Timesheets
+    button.btn.btn-primary(onclick="window.location.href='/admin/users'") View All Users
